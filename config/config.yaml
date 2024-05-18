@@ -54,5 +54,5 @@ evaluate_performance:
 
 aws:
   upload: True
-  bucket_name: mnk1906-clouds
+  bucket_name: group4-final-project
   prefix: experiments

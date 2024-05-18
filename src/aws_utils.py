@@ -8,7 +8,7 @@ import botocore
 logging.config.fileConfig("config/logging/local.conf")
 logger = logging.getLogger("clouds")
 
-def upload_artifacts(artifacts_dir, config):
+def upload_flight(config):
     """Upload all the artifacts in the specified directory to S3.
 
     Args:
@@ -19,7 +19,7 @@ def upload_artifacts(artifacts_dir, config):
         List of S3 URIs for each file that was uploaded.
     """
 
-    logger.info("Uploading artifacts to S3.")
+    logger.info("Uploading the data to S3.")
 
     try:
         # Initialize S3 client
@@ -43,14 +43,14 @@ def upload_artifacts(artifacts_dir, config):
     
     try:
         # Iterate over files in the directory
-        artifacts_path = Path(artifacts_dir)
+        artifacts_path = Path('data/')
         for file_path in artifacts_path.glob("*"):
             if file_path.is_file():
                 # Construct S3 key (object key)
                 s3_key = str(file_path.name)
 
                 # Upload file to S3
-                print(f"Upload the artifact {s3_key} to s3.")
+                print(f"Upload the data {s3_key} to s3.")
                 s3_client.upload_file(Filename=str(file_path), Bucket=bucket_name, Key=s3_key)
 
                 # Append S3 URI to the list
