@@ -3,7 +3,6 @@ Used to import and load models from S3 bucket
 """
 import logging
 import io
-from pathlib import Path
 
 import pandas as pd
 import boto3
