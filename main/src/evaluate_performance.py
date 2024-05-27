@@ -1,3 +1,6 @@
+"""
+This module evaluates model's performance
+"""
 from typing import Dict
 from pathlib import Path
 
@@ -29,9 +32,9 @@ def evaluate_performance(scores: pd.DataFrame) -> Dict:
 
     mae = mean_absolute_error(y_test, y_pred)
     rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-    r2 = r2_score(y_test, y_pred)
+    r2_new = r2_score(y_test, y_pred)
 
-    return {"mae": mae, "rmse": rmse, "r2": r2}
+    return {"mae": mae, "rmse": rmse, "r2": r2_new}
 
 
 def save_metrics(metric: Dict, location: Path) -> None:
@@ -52,8 +55,8 @@ def save_metrics(metric: Dict, location: Path) -> None:
         if isinstance(metric.get("r2"), np.generic):
             r2_value = float(metric["r2"].item())
             metric["r2"] = r2_value
-        with open(location, "w") as file:
+        with open(location, "w", encoding="utf-8") as file:
             yaml.dump(metric, file)
         logger.info("Model metrics saved to %s", location)
-    except FileNotFoundError as e:
-        logger.error("File not found error occurred while saving dataset: %s", e)
+    except FileNotFoundError as file_error:
+        logger.error("File not found error occurred while saving dataset: %s", file_error)

@@ -1,3 +1,6 @@
+"""
+This module save scores of models
+"""
 import logging
 from pathlib import Path
 
@@ -33,5 +36,6 @@ def save_scores(scores: pd.DataFrame, location: Path) -> None:
     try:
         scores.to_csv(location)
         logger.info("Model scores saved to %s", location)
-    except FileNotFoundError as e:
-        logger.error("File not found error occurred while saving scores: %s", e)
+    except FileNotFoundError as file_error:
+        logger.error("File not found error occurred while saving scores: %s", file_error)
+        

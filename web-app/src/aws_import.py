@@ -10,7 +10,6 @@ import joblib
 
 
 logger = logging.getLogger("clouds")
-    
 def load_model_from_s3(bucket_name:str, object_key:str):
     """
     Load a machine learning model from an AWS S3 bucket.
@@ -22,13 +21,10 @@ def load_model_from_s3(bucket_name:str, object_key:str):
     try:
         # Create an S3 client configured for the specified region.
         s3 = boto3.client('s3', region_name='us-east-2')
-        
         # Retrieve the object from S3 by key.
         response = s3.get_object(Bucket=bucket_name, Key=object_key)
-        
         # Read the binary content of the object.
         model_data = response['Body'].read()
-        
         # Load the model from the binary data.
         model = joblib.load(io.BytesIO(model_data))
         logger.info(f'Model {object_key}-{model} successfully loaded from {bucket_name}')
@@ -54,3 +50,4 @@ def make_prediction(model, input_data:pd.DataFrame):
     except Exception as e:
         logger.error(f'Error making prediction: {e}')
         return None
+    

@@ -123,29 +123,39 @@ if config:
 
     # Define the default values for numerical features
     default_numerical_values = {
-        "dept-elevation_ft": 107.00, "arr-elevation_ft": 607.00, "Route_Popularity": 2526.00, "Distance_Final": 754.00,
-        "Wind_Speed_mph": 9.00, "Wind_Gust_mph": 14.00, "Visibility_miles": 3, "tempF": 46.00, "precip_in": 0.00,
+        "dept-elevation_ft": 107.00, "arr-elevation_ft": 607.00, 
+        "Route_Popularity": 2526.00, "Distance_Final": 754.00,
+        "Wind_Speed_mph": 9.00, "Wind_Gust_mph": 14.00, "Visibility_miles": 3, 
+        "tempF": 46.00, "precip_in": 0.00,
         "daily_snow_in": 0.00, "dep_time": 900.00
     }
 
     # Define the options for categorical features
     default_categorical_options = {
-        "Airline": ["Air Wisconsin Airlines Corp", "Alaska Airlines Inc.", "Allegiant Air", "American Airlines Inc.",
-                    "Capital Cargo International", "Comair Inc.", "Commutair Aka Champlain Enterprises, Inc.",
-                    "Delta Air Lines Inc.", "Endeavor Air Inc.", "Envoy Air", "Frontier Airlines Inc.",
-                    "GoJet Airlines, LLC d/b/a United Express", "Horizon Air", "JetBlue Airways", "Mesa Airlines Inc.",
-                    "Republic Airlines", "SkyWest Airlines Inc.", "Southwest Airlines Co.", "Spirit Air Lines",
+        "Airline": ["Air Wisconsin Airlines Corp", "Alaska Airlines Inc.", "Allegiant Air",
+                     "American Airlines Inc.",
+                    "Capital Cargo International", "Comair Inc.", 
+                    "Commutair Aka Champlain Enterprises, Inc.",
+                    "Delta Air Lines Inc.", "Endeavor Air Inc.", "Envoy Air", 
+                    "Frontier Airlines Inc.",
+                    "GoJet Airlines, LLC d/b/a United Express", "Horizon Air", 
+                    "JetBlue Airways", "Mesa Airlines Inc.",
+                    "Republic Airlines", "SkyWest Airlines Inc.", "Southwest Airlines Co.", 
+                    "Spirit Air Lines",
                     "United Air Lines Inc."],
          "Departure Type": ["Closed", "Large Airport", "Medium Airport", "Small Airport"],
         "Arrival Type": ["Closed", "Large Airport", "Medium Airport", "Small Airport"]
     }
-    
     # Map user-friendly names to the original feature names
     categorical_feature_mapping = {
-        "Closed": {"Departure Type": "dept-type_ohe_closed", "Arrival Type": "arr-type_ohe_closed"},
-        "Large Airport": {"Departure Type": "dept-type_ohe_large_airport", "Arrival Type": "arr-type_ohe_large_airport"},
-        "Medium Airport": {"Departure Type": "dept-type_ohe_medium_airport", "Arrival Type": "arr-type_ohe_medium_airport"},
-        "Small Airport": {"Departure Type": "dept-type_ohe_small_airport", "Arrival Type": "arr-type_ohe_small_airport"},
+        "Closed": {"Departure Type": "dept-type_ohe_closed", 
+                   "Arrival Type": "arr-type_ohe_closed"},
+        "Large Airport": {"Departure Type": "dept-type_ohe_large_airport",
+                           "Arrival Type": "arr-type_ohe_large_airport"},
+        "Medium Airport": {"Departure Type": "dept-type_ohe_medium_airport",
+                            "Arrival Type": "arr-type_ohe_medium_airport"},
+        "Small Airport": {"Departure Type": "dept-type_ohe_small_airport",
+                           "Arrival Type": "arr-type_ohe_small_airport"},
     }
 
     # Streamlit interface
@@ -153,7 +163,8 @@ if config:
 
     # Model selection dropdown
     st.write("#### Select Model Version")
-    model_selection = st.selectbox("Select Model", ["PCR", "Random Forest", "Gradient Boosting"])
+    model_selection = st.selectbox("Select Model", ["PCR", "Random Forest",
+                                                     "Gradient Boosting"])
 
     @st.cache_data
     def load_model(bucket_name, object_key):
@@ -166,14 +177,12 @@ if config:
         # Clear cache if the model is changed
         if "model_version" in st.session_state and st.session_state["model_version"] != model_selection:
             clear_cache()
-        
         if model_selection == "PCR":
             object_key = aws_config['pcr_key']
         elif model_selection == "Random Forest":
             object_key = aws_config['rf_key']
         elif model_selection == "Gradient Boosting":
             object_key = aws_config['gb_key']
-            
         # Set the bucket name and model key for s3 load
         try:
             imported_model = load_model(aws_config["bucket_name"], object_key)
@@ -185,21 +194,18 @@ if config:
             else:
                 st.session_state["model"] = None
                 st.error("Model loaded is None.")
-        except ValueError as e:
-            st.error(f"Failed to load {model_selection}: {e}")
-            logger.error(f"Failed to load {model_selection}: {e}")
-    
+        except ValueError as value_error:
+            st.error(f"Failed to load {model_selection}: {value_error}")
+            logger.error(f"Failed to load {model_selection}: {value_error}") 
     # Set Text Input title
-    st.write("Enter Flight Details:")
-    
+    st.write("Enter Flight Details:")  
     # Create inputs for numerical features
     numerical_inputs = {}
     for feature in numerical_features:
         numerical_inputs[feature] = st.text_input(
             feature,
             value=default_numerical_values[feature]
-        )
-        
+        ) 
     # Date input for extracting Quarter, Month, and DayOfWeek
     date_input = st.date_input("Select Date", 
         value=st.session_state.get("date_input", pd.to_datetime("2021-01-01")),
@@ -221,8 +227,7 @@ if config:
             index=default_categorical_options[feature].index(st.session_state.get(feature, default_categorical_options[feature][0])),
             on_change=clear_cache(),
             args=(feature, st.session_state.get(feature, default_categorical_options[feature][0]))
-        )
-        
+        ) 
     # Add extracted date-related features to inputs
     numerical_inputs["Quarter"] = quarter
     numerical_inputs["Month"] = month
@@ -243,22 +248,18 @@ if config:
     # Reorder numerical inputs to match the order of the feature names
     num_order = config["column_order"]["num_features"]
     numerical_inputs = {key: numerical_inputs[key] for key in num_order}
-    
     # Combine the numerical and categorical inputs
     input_features = {**numerical_inputs, **encoded_inputs}
     input_features = pd.DataFrame(input_features,index=[0])
 
     # Dataset
     st.write(input_features)
-    
     # Feature engineering calculations
     if st.button("Make Prediction"):
         if "model" in st.session_state:
-            try:
-                
+            try:        
                 # Clear the cache to ensure the latest prediction is shown
-                clear_cache()
-                
+                clear_cache()     
                 # Make predictions
                 pred = ai.make_prediction(st.session_state["model"], input_features)
                 st.write(f"### Expected Delays: {pred} minutes")

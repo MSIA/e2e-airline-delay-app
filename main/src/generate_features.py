@@ -1,3 +1,6 @@
+"""
+This module performs feature engineering
+"""
 import logging
 from pathlib import Path
 
@@ -15,7 +18,7 @@ def generate_features(data: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: The DataFrame with generated features.
     '''
-    data = data[data['Cancelled'] == False]
+    data = data[data['Cancelled'] == 'False']
     dep_time = []
     for i in data['DepTimeBlk']:
         dep_time.append(int(i[0:2]))
@@ -39,5 +42,5 @@ def save_features(data: pd.DataFrame, location: Path) -> None:
     try:
         data.to_csv(location)
         logger.info('Data with features saved to %s', location)
-    except FileNotFoundError as e:
-        logger.error('File not found error occurred while saving features: %s', e)
+    except FileNotFoundError as file_error:
+        logger.error('File not found error occurred while saving features: %s', file_error)
