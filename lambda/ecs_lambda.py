@@ -1,17 +1,17 @@
+"""Lambda function to run trigger ECR/ECS Pipeline"""
 import json
-import csv
-import urllib.parse
 import boto3
-import io
 
 print('Loading function')
 
 s3 = boto3.client('ecs')
 
-import json
-import boto3
-
-def lambda_handler(event, context):
+def lambda_handler():
+    """A Lambda handler to trigger ECR/ECS Pipeline
+       This python script will be used in Lambda AWS platform, not for Docker.
+       Note that this handler does not have Args or Return Value.
+    
+    """
     client = boto3.client('ecs')
     response = client.run_task(
         cluster='cloud-project-pipeline',

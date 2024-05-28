@@ -4,13 +4,19 @@ Used to import and load models from S3 bucket
 import logging
 import io
 
+from typing import Union, Optional
+import numpy as np
 import pandas as pd
 import boto3
 import joblib
-
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.linear_model import LinearRegression
 
 logger = logging.getLogger("clouds")
-def load_model_from_s3(bucket_name:str, object_key:str):
+def load_model_from_s3(bucket_name:str, object_key:str) -> Optional[Union[RandomForestRegressor, \
+                                                                    GradientBoostingRegressor, \
+                                                                    LinearRegression, \
+                                                                    None]]:
     """
     Load a machine learning model from an AWS S3 bucket.
     Args:
@@ -33,7 +39,11 @@ def load_model_from_s3(bucket_name:str, object_key:str):
         logger.error(f'Error loading model from S3: {e}')
         return None
 
-def make_prediction(model, input_data:pd.DataFrame):
+def make_prediction(model:Optional[Union[RandomForestRegressor, \
+                                         GradientBoostingRegressor, \
+                                         LinearRegression]], \
+                    input_data:pd.DataFrame) -> Optional[Union[np.ndarray,\
+                                                               None]]:
     """
     Make predictions using the given model and input data.
 
@@ -47,7 +57,6 @@ def make_prediction(model, input_data:pd.DataFrame):
     try:
         res = model.predict(input_data)
         return res
-    except Exception as e:
+    except ValueError as e:
         logger.error(f'Error making prediction: {e}')
         return None
-    
