@@ -24,11 +24,11 @@ web-app/
 - `src`: Contains all source codes to power-up the app.py, also inside src, and test_modules.py under tests folder.
 - `tests`: Contains another Dockerfile for Unit Testing purpose, and test_modules.py for unit testing.
 
-**Note**: requirements.txt has slightly different lists of packages compared to `main` folder's requirements.txt due to the inclusion of streamlit related libaries.
+**Note**: requirements.txt has slightly different lists of packages compared to `pipeline` folder's requirements.txt due to the inclusion of streamlit related libaries.
 
 ### How We Built Streamlit App
 
-**This assumes that we followed the steps in pipeline main folder**
+**This assumes that we followed the steps in the pipeline folder**
 
 Once we have all three models (PCR, Random Forest, and Gradient Boosting) trained and saved in S3, we begin the process of remotely importing these pre-trained models.
 
@@ -57,7 +57,7 @@ docker push public.ecr.aws/XXXX/project-app:latest
 
 After deploying the Stremailt Docker Image to ECR, we connect the ECR to the ECS.
 
-Unlike `main` pipeline process where we can trigger one-time `Task`, we realized that this web-app will require a new `Service` running under FARGATE at real-time. This will create a new `Task`
+Unlike the `pipeline` pipeline process where we can trigger one-time `Task`, we realized that this web-app will require a new `Service` running under FARGATE at real-time. This will create a new `Task`
 
 Once we set construct the service with FARGATE and connect to ECR while maintaining the Port at 80, we will see the following website that will redirect you in `Networking` Tab for `Task`.
 
