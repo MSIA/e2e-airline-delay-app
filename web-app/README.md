@@ -61,10 +61,6 @@ Unlike `main` pipeline process where we can trigger one-time `Task`, we realized
 
 Once we set construct the service with FARGATE and connect to ECR while maintaining the Port at 80, we will see the following website that will redirect you in `Networking` Tab for `Task`.
 
-![Streamlit Image 1](image/web1.jpg)
+<img src="./image/web1.jpg" alt="Streamlit page1" width="600" height="600">
 
-<img src="./image/web1.jpg" alt="Streamlit page1" width="200" height="200">
-
-![Streamlit Image 2](image/web2.jpg)
-
-<img src="./image/web2.jpg" alt="Streamlit page2" width="200" height="200">
+<img src="./image/web2.jpg" alt="Streamlit page2" width="600" height="600">
